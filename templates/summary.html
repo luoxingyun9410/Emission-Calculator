@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Emission Summary</title>
+    <!-- Bootstrap CSS and other styles here -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f0f4f8;
+            font-family: 'Roboto', sans-serif;
+        }
+        .logo {
+            max-width: 200px;
+            margin: 20px auto;
+            display: block;
+        }
+        .card {
+            border: none;
+            border-radius: 10px;
+            margin-top: 30px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        .card-header {
+            background-color: #4f2683;
+            color: white;
+            border-top-left-radius: 10px;
+            border-top-right-radius: 10px;
+            text-align: center;
+            padding: 15px;
+            font-size: 24px;
+            font-weight: 700;
+        }
+        .card-body {
+            padding: 25px;
+        }
+        .summary-total {
+            font-size: 48px;
+            font-weight: 700;
+            color: #046a38; /* Green */
+            margin-top: 20px;
+        }
+        .calculation-section {
+            background-color: #e9ecef;
+            border-radius: 10px;
+            padding: 15px;
+            margin-top: 20px;
+        }
+        .back-button {
+            display: block;
+            margin-top: 30px;
+            text-align: center;
+        }
+        .back-button a {
+            color: white;
+            background-color: #046a38;
+            padding: 10px 20px;
+            border-radius: 5px;
+            text-decoration: none;
+        }
+        .table th {
+        white-space: nowrap; /* Prevents text from wrapping */
+        font-size: 14px; /* Adjusts the font size for a more compact look */
+        padding: 8px; /* Reduces padding to fit content */
+        text-align: center; /* Centers the text for better alignment */
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-5">
+        <img src="{{ url_for('static', filename='images/CB_Logo_rgb_10cm+PNG.png') }}" alt="Company Logo" class="logo">
+        <div class="card shadow-sm">
+            <div class="card-header">
+                <i class="fas fa-chart-line"></i> Emission Summary
+            </div>
+            <div class="card-body">
+                <h3><i class="fas fa-cloud"></i> Total Emissions</h3>
+                <p class="summary-total">{{ total_emissions | round(2) }} t CO2-e</p>
+    
+                <!-- Emission Breakdown with icons -->
+                <div class="calculation-section">
+                    <h5><i class="fas fa-list"></i> Emission Breakdown</h5>
+                    <table class="table table-bordered">
+                        <thead class="table-header">
+                            <tr>
+                                <th><i class="fas fa-tags"></i> Type</th>
+                                <th><i class="fas fa-weight"></i> Emissions (t CO2-e)</th>
+                                <th><i class="fas fa-tachometer-alt"></i> Volume</th>
+                                <th><i class="fas fa-burn"></i> Emission Factor</th>
+                                <th><i class="fas fa-leaf"></i> Energy Content</th>
+                                <th><i class="fas fa-equals"></i> Formula</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for detail in emission_details %}
+                            <tr>
+                                <td>{{ detail.emission_type }}</td>
+                                <td>{{ detail.emissions | round(2) }}</td>
+                                <td>{{ detail.volume }}</td>
+                                <td>{{ detail.emission_factor }}</td>
+                                <td>{{ detail.energy_content }}</td>
+                                <td>{{ detail.formula }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+    
+                <!-- Buttons for clearing calculations and exporting -->
+                <div class="mt-4">
+                    <button class="btn btn-danger" onclick="clearCalculation()">
+                        <i class="fas fa-trash"></i> Clear Calculation
+                    </button>
+                    <a href="/export_csv" class="btn btn-info">
+                        <i class="fas fa-file-csv"></i> Export as CSV
+                    </a>
+                </div>
+    
+                <!-- Back button -->
+                <div class="back-button">
+                    <a href="/" class="btn btn-primary"><i class="fas fa-arrow-left"></i> Back to Home</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // JavaScript for adding a calculation
+        function addCalculation() {
+            const newEmission = 100;  // Example value, replace this with your real calculation logic
+
+            fetch('/add_calculation', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ new_emission: newEmission })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    document.querySelector('.summary-total').textContent = data.total_emissions + ' t CO2-e';
+                    // Optionally refresh the emission details on the page
+                    location.reload();
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        }
+
+        // JavaScript for clearing the calculation
+        function clearCalculation() {
+        fetch('/clear', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(response => {
+            if (response.ok) {
+                // Clear the total emissions display
+                document.querySelector('.summary-total').textContent = '0 t CO2-e';
+                
+                // Clear the emission breakdown table content
+                const tableBody = document.querySelector('table tbody');
+                if (tableBody) {
+                    tableBody.innerHTML = '';
+                }
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+        }
+    </script>
+</body>
+</html>

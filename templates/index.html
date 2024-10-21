@@ -130,34 +130,43 @@
                     <div class="custom-dropdown">
                         <label for="region"><i class="fa fa-globe"></i> <strong>Select Your Region:</strong></label>
                         <div class="dropdown">
-                            <button class="dropbtn">Select Region</button>
+                            <button class="dropbtn" id="selected-region">Select Region</button>
                             <div class="dropdown-content">
-                                <a href="#" data-value="Australia">
+                                <a href="#" data-value="Australia" onclick="selectRegion('Australia')">
                                     <img src="{{ url_for('static', filename='images/australia_flag.png') }}" class="flag-icon"> Australia
                                 </a>
-                                <a href="#" data-value="Europe">
+                                <a href="#" data-value="Europe" onclick="selectRegion('Europe')">
                                     <img src="{{ url_for('static', filename='images/europe_flag.png') }}" class="flag-icon"> Europe
                                 </a>
-                                <a href="#" data-value="China">
+                                <a href="#" data-value="China" onclick="selectRegion('China')">
                                     <img src="{{ url_for('static', filename='images/china_flag.png') }}" class="flag-icon"> China
                                 </a>
                             </div>
                         </div>
+                        <input type="hidden" id="region" name="region" value="Australia"> <!-- Default to Australia -->
                     </div>
 
-                    <!-- Volume Input -->
-                    <div class="form-group">
-                        <label for="volume"><i class="fa fa-tint"></i> Volume (in liters or appropriate unit):</label>
-                        <input type="text" id="volume" name="volume" class="form-control" placeholder="Enter volume">
-                    </div>
-
-                    <!-- Emission Type Input -->
                     <div class="form-group">
                         <label for="emission_type"><i class="fa fa-industry"></i> Emission Type:</label>
-                        <input type="text" id="emission_type" name="emission_type" class="form-control" placeholder="Enter emission type">
+                        <select id="emission_type" name="emission_type" class="form-control">
+                            {% for type in emission_types %}
+                                <option value="{{ type }}">{{ type }}</option>
+                            {% endfor %}
+                        </select>
                     </div>
 
-                    <!-- Submit Button -->
+                    <div class="form-group">
+                        <label for="unit"><i class="fa fa-balance-scale"></i> Unit:</label>
+                        <select id="unit" name="unit" class="form-control">
+                            <option value="" disabled selected>Select a unit</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="volume"><i class="fa fa-tint"></i> Volume (in selected unit):</label>
+                        <input type="number" id="volume" name="volume" class="form-control" placeholder="Enter volume">
+                    </div>
+
                     <button type="submit" class="btn btn-primary btn-block">
                         <i class="fas fa-calculator"></i> Calculate
                     </button>
@@ -166,19 +175,40 @@
         </div>
     </div>
 
-    <!-- Add the JavaScript for region selection -->
     <script>
+        function selectRegion(region) {
+            document.getElementById('selected-region').textContent = region;
+            document.getElementById('region').value = region;
+        }
+        </script>
+        
+        <!-- Ensure proper unit selection -->
+        <script>
         document.addEventListener('DOMContentLoaded', function() {
-            var dropdownItems = document.querySelectorAll('.dropdown-content a');
-            var dropdownButton = document.querySelector('.dropbtn');
-            
-            dropdownItems.forEach(function(item) {
-                item.addEventListener('click', function(event) {
-                    event.preventDefault();
-                    dropdownButton.innerHTML = item.innerHTML; // Update the button text
-                });
+            document.getElementById('emission_type').addEventListener('change', function () {
+                const emissionType = this.value;
+                fetch('/get_units', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ emission_type: emissionType })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    const unitSelect = document.getElementById('unit');
+                    unitSelect.innerHTML = '<option value="" disabled selected>Select a unit</option>';  // Clear previous options
+                    data.forEach(unit => {
+                        const option = document.createElement('option');
+                        option.value = unit;
+                        option.textContent = unit;
+                        unitSelect.appendChild(option);
+                    });
+                })
+                .catch(error => console.error('Error fetching units:', error));
             });
         });
-    </script>
+        </script>
+    
 </body>
 </html>

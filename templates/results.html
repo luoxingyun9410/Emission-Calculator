@@ -1,3 +1,4 @@
+<!-- results.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -12,7 +13,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
     <style>
         body {
-            background-color: #f0f4f8; /* Soft background color */
+            background-color: #f0f4f8;
             font-family: 'Roboto', sans-serif;
         }
         .logo {
@@ -27,7 +28,7 @@
             box-shadow: 0 4px 8px rgba(0,0,0,0.1);
         }
         .card-header {
-            background-color: #4f2683; /* Updated to purple */
+            background-color: #4f2683;
             color: white;
             border-top-left-radius: 10px;
             border-top-right-radius: 10px;
@@ -46,7 +47,7 @@
             margin-top: 20px;
         }
         .thead-dark {
-            background-color:#046a38; /* Updated to green */
+            background-color:#046a38;
             color: white;
         }
         .parameter-header {
@@ -67,17 +68,16 @@
         }
         .back-button a {
             color: white;
+            background-color: #046a38;
         }
         .table-table-striped {
-        background-color: #4f2683;
+            background-color: #4f2683;
         }
         .table-header {
-        background-color: #046a38; /* Green color */
-        color: white; /* Text color white for contrast */
+            background-color: #046a38;
+            color: white;
         }
     </style>
-    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
-    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 </head>
 <body>
     <div class="container mt-5">
@@ -133,6 +133,17 @@
                     </p>
                 </div>
 
+                <!-- Button to view summary -->
+                <form action="/summary" method="POST">
+                    <input type="hidden" name="emission_type" value="{{ emission_type }}">
+                    <input type="hidden" name="emissions" value="{{ emissions }}">
+                    <input type="hidden" name="volume" value="{{ volume }}">
+                    <input type="hidden" name="emission_factor" value="{{ emission_factor }}">
+                    <input type="hidden" name="energy_content" value="{{ energy_content }}">
+                    <button type="submit" class="btn btn-secondary">View Summary</button>
+                </form>
+                
+
                 <!-- Back button -->
                 <div class="back-button">
                     <a href="/" class="btn btn-primary"><i class="fas fa-arrow-left"></i> Back to Home</a>
@@ -141,4 +152,5 @@
         </div>
     </div>
 </body>
+
 </html>
