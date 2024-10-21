@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Emission Calculator</title>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <style>
+        body {
+            background-color: #f0f4f8;
+            font-family: 'Roboto', sans-serif;
+        }
+        .logo {
+            max-width: 200px;
+            margin: 20px auto;
+            display: block;
+        }
+        .card {
+            border: none;
+            border-radius: 10px;
+            margin-top: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        .card-header {
+            background-color: #4f2683;
+            color: white;
+            border-top-left-radius: 10px;
+            border-top-right-radius: 10px;
+            text-align: center;
+            padding: 10px;
+            font-size: 24px;
+            font-weight: 700;
+        }
+        .card-body {
+            padding: 15px;
+        }
+        .description {
+            margin-top: 7px;
+            font-size: 16px;
+            color: #555;
+        }
+        .form-group label {
+            font-weight: bold;
+        }
+        .custom-dropdown {
+            position: relative;
+            display: inline-block;
+            width: 100%;
+        }
+        .dropbtn {
+            justify-content: center; /* Centers horizontally */
+            align-items: center; /* Centers vertically */
+            background-color: #4f2683; /* Purple */
+            color: white;
+            padding: 10px;
+            font-size: 16px;
+            border: none;
+            cursor: pointer;
+            width: 200px;
+            border-radius: 8px; /* Adjusts the border radius for rounder corners */
+            padding: 10px;      /* Adds padding inside the block */
+            margin-bottom: 20px;
+        }
+        .dropbtn:hover {
+            background-color: #046a38; /* Green */
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: #f9f9f9;
+            min-width: 200px;
+            box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+            z-index: 1;
+        }
+
+        .dropdown-content a {
+            color: black;
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+        }
+
+        .dropdown-content a:hover {
+            background-color: #f1f1f1;
+        }
+
+        .flag-icon {
+            width: 20px;
+            height: 15px;
+            margin-right: 10px;
+        }
+
+        .dropdown:hover .dropdown-content {
+            display: block;
+        }
+
+        .btn-primary {
+            background-color: #046a38; /* Green */
+            border-color: #046a38; /* Green */
+        }
+        .btn-primary:hover {
+            background-color: #4f2683; /* Purple */
+            border-color: #4f2683; /* Purple */
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-5 no-margin">
+        <!-- Add Logo at the top -->
+        <img src="{{ url_for('static', filename='images/CB_Logo_rgb_10cm+PNG.png') }}" alt="Company Logo" class="logo">
+
+        <div class="card shadow-sm no-margin">
+            <div class="card-header no-margin">
+                <i class="fas fa-calculator"></i> Emission Calculator
+            </div>
+            <div class="card-body">
+                <!-- Description Section -->
+                <div class="description">
+                    <p>Welcome to the Emission Calculator! Use this tool to calculate your emissions based on fuel consumption, energy usage, and more. Currently, the calculator is configured for Australian emission factors. Select your region below to customize the calculations for Europe or China (coming soon).</p>
+                </div>
+
+                <!-- Form for Input -->
+                <form method="POST" action="/calculate">
+                    <!-- Region Selection with Custom Styled Dropdown -->
+                    <div class="custom-dropdown">
+                        <label for="region"><i class="fa fa-globe"></i> <strong>Select Your Region:</strong></label>
+                        <div class="dropdown">
+                            <button class="dropbtn">Select Region</button>
+                            <div class="dropdown-content">
+                                <a href="#" data-value="Australia">
+                                    <img src="{{ url_for('static', filename='images/australia_flag.png') }}" class="flag-icon"> Australia
+                                </a>
+                                <a href="#" data-value="Europe">
+                                    <img src="{{ url_for('static', filename='images/europe_flag.png') }}" class="flag-icon"> Europe
+                                </a>
+                                <a href="#" data-value="China">
+                                    <img src="{{ url_for('static', filename='images/china_flag.png') }}" class="flag-icon"> China
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Volume Input -->
+                    <div class="form-group">
+                        <label for="volume"><i class="fa fa-tint"></i> Volume (in liters or appropriate unit):</label>
+                        <input type="text" id="volume" name="volume" class="form-control" placeholder="Enter volume">
+                    </div>
+
+                    <!-- Emission Type Input -->
+                    <div class="form-group">
+                        <label for="emission_type"><i class="fa fa-industry"></i> Emission Type:</label>
+                        <input type="text" id="emission_type" name="emission_type" class="form-control" placeholder="Enter emission type">
+                    </div>
+
+                    <!-- Submit Button -->
+                    <button type="submit" class="btn btn-primary btn-block">
+                        <i class="fas fa-calculator"></i> Calculate
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add the JavaScript for region selection -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var dropdownItems = document.querySelectorAll('.dropdown-content a');
+            var dropdownButton = document.querySelector('.dropbtn');
+            
+            dropdownItems.forEach(function(item) {
+                item.addEventListener('click', function(event) {
+                    event.preventDefault();
+                    dropdownButton.innerHTML = item.innerHTML; // Update the button text
+                });
+            });
+        });
+    </script>
+</body>
+</html>

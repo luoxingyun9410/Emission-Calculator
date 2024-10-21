@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Emission Calculation Results</title>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <!-- Google Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f0f4f8; /* Soft background color */
+            font-family: 'Roboto', sans-serif;
+        }
+        .logo {
+            max-width: 200px;
+            margin: 20px auto;
+            display: block;
+        }
+        .card {
+            border: none;
+            border-radius: 10px;
+            margin-top: 30px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        .card-header {
+            background-color: #4f2683; /* Updated to purple */
+            color: white;
+            border-top-left-radius: 10px;
+            border-top-right-radius: 10px;
+            text-align: center;
+            padding: 15px;
+            font-size: 24px;
+            font-weight: 700;
+        }
+        .card-body {
+            padding: 25px;
+        }
+        .btn-secondary {
+            margin-top: 20px;
+        }
+        .table {
+            margin-top: 20px;
+        }
+        .thead-dark {
+            background-color:#046a38; /* Updated to green */
+            color: white;
+        }
+        .parameter-header {
+            font-weight: bold;
+            font-size: 18px;
+            margin-top: 20px;
+        }
+        .calculation-section {
+            background-color: #e9ecef;
+            border-radius: 10px;
+            padding: 15px;
+            margin-top: 20px;
+        }
+        .back-button {
+            display: block;
+            margin-top: 30px;
+            text-align: center;
+        }
+        .back-button a {
+            color: white;
+        }
+        .table-table-striped {
+        background-color: #4f2683;
+        }
+        .table-header {
+        background-color: #046a38; /* Green color */
+        color: white; /* Text color white for contrast */
+        }
+    </style>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+</head>
+<body>
+    <div class="container mt-5">
+        <!-- Add Logo at the top -->
+        <img src="{{ url_for('static', filename='images/CB_Logo_rgb_10cm+PNG.png') }}" alt="Company Logo" class="logo">
+        
+        <div class="card shadow-sm">
+            <div class="card-header">
+                <i class="fas fa-leaf"></i> Emission Calculation Results
+            </div>
+            <div class="card-body">
+                <!-- Display the results in a structured way -->
+                <p><strong><i class="fas fa-cloud"></i> Emission Type:</strong> {{ emission_type }}</p>
+                <p><strong><i class="fas fa-calculator"></i> Calculated Emissions:</strong> {{ emissions }} t CO2-e</p>
+                
+                <!-- Table showing details of the calculation -->
+                <h5 class="parameter-header"><i class="fas fa-info-circle"></i> Calculation Parameters</h5>
+                <table class="table table-bordered">
+                    <thead class="table-header">
+                      <tr>
+                        <th>Parameter</th>
+                        <th>Value</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td>Volume (in kL)</td>
+                        <td>{{ volume }}</td>
+                      </tr>
+                      <tr>
+                        <td>Emission Factor (kg CO2-e/GJ)</td>
+                        <td>{{ emission_factor }}</td>
+                      </tr>
+                      <tr>
+                        <td>Energy Content (GJ/kL or appropriate unit)</td>
+                        <td>{{ 'N/A' if energy_content == None else energy_content }}</td>
+                      </tr>
+                    </tbody>
+                  </table>
+
+                <!-- Display the formula used -->
+                <div class="calculation-section">
+                    <h5><i class="fas fa-equals"></i> Calculation Formula</h5>
+                    <p>
+                        <code>Emissions (t CO2-e) = (Volume × Energy Content × Emission Factor) / 1000</code>
+                    </p>
+                    
+                    <!-- Show the calculation step-by-step -->
+                    <h5><i class="fas fa-cogs fa-spin"></i> Calculation Steps</h5>
+                    <p>
+                        <strong>Emissions (kg CO2-e) =</strong> {{ volume }} × {{ energy_content }} × {{ emission_factor }}<br>
+                        <strong>Emissions (t CO2-e) =</strong> {{ emissions }} t CO2-e
+                    </p>
+                </div>
+
+                <!-- Back button -->
+                <div class="back-button">
+                    <a href="/" class="btn btn-primary"><i class="fas fa-arrow-left"></i> Back to Home</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
