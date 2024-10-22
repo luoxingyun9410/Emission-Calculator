@@ -11,11 +11,5 @@
         "src": "/(.*)",
         "dest": "api/app.py"
       }
-    ],
-    "env": {
-      "PYTHONUNBUFFERED": "1"
-    },
-    "build": {
-      "start": "python api/app.py"
-    }
+    ]
   }
