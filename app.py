@@ -4,7 +4,7 @@ from io import StringIO, BytesIO
 import sqlite3
 import csv
 
-app = Flask(__name__)
+app = Flask(__name__, template_folder='templates', static_folder='static')
 app.secret_key = 'your_unique_secret_key'
 
 emission_totals_global = {}
@@ -223,6 +223,7 @@ def export_csv():
         download_name='emission_breakdown.csv',
         mimetype='text/csv'
     )
+
 
 if __name__ == '__main__':
     app.run(debug=True)
