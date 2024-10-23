@@ -36,8 +36,12 @@ def get_units():
 
     return jsonify(units)
 
-# Route to render the main form
 @app.route('/')
+def landing():
+    return render_template('landing.html')
+
+# Route to render the main form
+@app.route('/index')
 def index():
     emission_types = get_emission_types()  # Fetch emission types dynamically
     return render_template('index.html', emission_types=emission_types)
